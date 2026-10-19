@@ -1,11 +1,25 @@
 import type { FaceLandmarker } from "@mediapipe/tasks-vision";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { classifyExpression, type ExpressionRead } from "./emotion";
+import type { FaceAnchors } from "./emotes";
 
 export type CameraState = "off" | "requesting" | "loading" | "live" | "no-face" | "error";
 
 const WASM_ROOT = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.1.1/wasm";
 const MODEL_PATH = "/models/face_landmarker.task";
+
+function extractFaceAnchors(landmarks: Array<{ x: number; y: number }>): FaceAnchors | null {
+  if (landmarks.length <= 454) return null;
+  const point = (index: number) => ({ x: landmarks[index].x, y: landmarks[index].y });
+  return {
+    eyeLeft: point(33),
+    eyeRight: point(263),
+    faceLeft: point(234),
+    faceRight: point(454),
+    forehead: point(10),
+    nose: point(1),
+  };
+}
 
 function explainCameraError(error: unknown): string {
   if (error instanceof DOMException) {
@@ -22,7 +36,7 @@ function explainCameraError(error: unknown): string {
   return "The camera or expression model could not start. Check your connection and camera settings, then try again.";
 }
 
-export function useEmotionMirror() {
+export function useEmotionMirror(trackFace = false) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const detectorRef = useRef<FaceLandmarker | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -34,9 +48,12 @@ export function useEmotionMirror() {
   const lastRunAtRef = useRef(0);
   const candidateMoodRef = useRef<string | null>(null);
   const candidateFramesRef = useRef(0);
+  const trackFaceRef = useRef(trackFace);
+  trackFaceRef.current = trackFace;
   const [cameraState, setCameraState] = useState<CameraState>("off");
   const [errorMessage, setErrorMessage] = useState("");
   const [expression, setExpression] = useState<ExpressionRead | null>(null);
+  const [faceAnchors, setFaceAnchors] = useState<FaceAnchors | null>(null);
 
   const releaseResources = useCallback(() => {
     runningRef.current = false;
@@ -55,6 +72,7 @@ export function useEmotionMirror() {
     const generation = ++generationRef.current;
     setErrorMessage("");
     setExpression(null);
+    setFaceAnchors(null);
     setCameraState("requesting");
 
     try {
@@ -133,9 +151,14 @@ export function useEmotionMirror() {
     generationRef.current += 1;
     releaseResources();
     setExpression(null);
+    setFaceAnchors(null);
     setErrorMessage("");
     setCameraState("off");
   }, [releaseResources]);
+
+  useEffect(() => {
+    if (!trackFace) setFaceAnchors(null);
+  }, [trackFace]);
 
   useEffect(() => {
     if (cameraState !== "live" && cameraState !== "no-face") return;
@@ -146,19 +169,23 @@ export function useEmotionMirror() {
       const detector = detectorRef.current;
       if (
         video && detector && video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
-        video.currentTime !== lastFrameRef.current && timestamp - lastRunAtRef.current > 180
+        video.currentTime !== lastFrameRef.current && timestamp - lastRunAtRef.current > (trackFaceRef.current ? 90 : 180)
       ) {
         lastFrameRef.current = video.currentTime;
         lastRunAtRef.current = timestamp;
         try {
           const result = detector.detectForVideo(video, performance.now());
           const categories = result.faceBlendshapes[0]?.categories;
-          if (!result.faceLandmarks.length || !categories?.length) {
+          const landmarks = result.faceLandmarks[0];
+          const anchors = landmarks ? extractFaceAnchors(landmarks) : null;
+          if (!anchors || !categories?.length) {
             candidateMoodRef.current = null;
             candidateFramesRef.current = 0;
             setExpression(null);
+            if (trackFaceRef.current) setFaceAnchors(null);
             setCameraState((current) => current === "no-face" ? current : "no-face");
           } else {
+            if (trackFaceRef.current) setFaceAnchors(anchors);
             const next = classifyExpression(categories);
             if (candidateMoodRef.current === next.mood) {
               candidateFramesRef.current += 1;
@@ -197,6 +224,7 @@ export function useEmotionMirror() {
     cameraState,
     errorMessage,
     expression,
+    faceAnchors,
     cameraActive: cameraState === "loading" || cameraState === "live" || cameraState === "no-face",
     startCamera,
     stopCamera,

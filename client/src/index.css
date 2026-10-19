@@ -63,6 +63,7 @@ h1 em { color: #81973b; font-style: italic; }
 .mirror-screen::before { content: ""; position: absolute; z-index: 1; inset: 0; background: linear-gradient(180deg, rgba(18,24,19,.16) 0%, transparent 27%, transparent 68%, rgba(14,19,15,.58) 100%); pointer-events: none; }
 .mirror-screen video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); opacity: 0; transition: opacity .5s ease; }
 .mirror-screen.has-camera video { opacity: .92; }
+.face-emote-layer { z-index: 3; position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; }
 .mirror-grain { z-index: 2; position: absolute; inset: 0; opacity: .1; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.92' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E"); mix-blend-mode: soft-light; }
 .camera-welcome { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 390px; padding: 20px 24px 27px; }
 .mirror-orbit { position: relative; width: 127px; height: 127px; margin-bottom: 20px; border: 1px solid rgba(220,232,191,.28); border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 0 13px rgba(220,232,191,.035), 0 0 70px rgba(196,220,133,.1); }
@@ -100,6 +101,14 @@ h1 em { color: #81973b; font-style: italic; }
 .filter-choice small { color: #777b70; font-size: 8px; line-height: 1; white-space: nowrap; }
 .filter-choice.selected small { color: #414638; font-weight: 700; }
 .filter-footnote { margin: 5px 0 0; color: #929487; font-size: 8px; line-height: 1.4; }
+.emote-controls { margin-top: 10px; padding-top: 11px; border-top: 1px solid rgba(92, 101, 77, .14); }
+.emote-tray { display: flex; gap: 5px; margin-top: 7px; overflow-x: auto; padding: 0 0 4px; scrollbar-color: #c9cfb3 transparent; scrollbar-width: thin; }
+.emote-choice { flex: 0 0 61px; min-width: 0; min-height: 55px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 4px 3px; border: 1px solid transparent; border-radius: 9px; background: transparent; cursor: pointer; transition: background .18s ease, border-color .18s ease, transform .18s ease; }
+.emote-choice:hover { background: rgba(255, 255, 255, .42); transform: translateY(-1px); }
+.emote-choice.selected { border-color: #cfd7b8; background: #f7f8ef; }
+.emote-choice > span { width: 26px; height: 26px; display: grid; place-items: center; font-size: 18px; line-height: 1; }
+.emote-choice small { color: #777b70; font-size: 7px; line-height: 1; white-space: nowrap; }
+.emote-choice.selected small { color: #414638; font-weight: 700; }
 .camera-stop { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; color: #777b71; padding: 7px 3px; cursor: pointer; letter-spacing: .04em; text-transform: none; font-size: 10px; }
 .camera-stop:hover { color: #33392c; }
 .mirror-caption { margin: 11px 4px 0; color: #898b81; font-weight: 500; font-size: 9px; letter-spacing: .02em; line-height: 1.7; }.mirror-caption span { margin-right: 7px; color: #717568; letter-spacing: .13em; font-weight: 700; }

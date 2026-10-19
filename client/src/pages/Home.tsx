@@ -4,6 +4,8 @@ import { getMood, MOODS, type MoodId } from "@/features/mirror/emotion";
 import { createAmbientPlayer, type AmbientPlayer } from "@/features/mirror/music";
 import { useEmotionMirror } from "@/features/mirror/useEmotionMirror";
 import { MIRROR_FILTERS, type MirrorFilterId } from "@/features/mirror/filters";
+import { FACE_EMOTES, type FaceEmoteId } from "@/features/mirror/emotes";
+import { FaceEmoteOverlay } from "@/features/mirror/FaceEmoteOverlay";
 
 function statusText(state: string) {
   if (state === "requesting") return "Waiting for permission";
@@ -15,7 +17,8 @@ function statusText(state: string) {
 }
 
 export default function Home() {
-  const mirror = useEmotionMirror();
+  const [faceEmoteId, setFaceEmoteId] = useState<FaceEmoteId>("none");
+  const mirror = useEmotionMirror(faceEmoteId !== "none");
   const [manualMood, setManualMood] = useState<MoodId | null>(null);
   const [filterId, setFilterId] = useState<MirrorFilterId>("natural");
   const [suggestionIndex, setSuggestionIndex] = useState(0);
@@ -27,6 +30,7 @@ export default function Home() {
   const activeMoodId = manualMood ?? mirror.expression?.mood ?? null;
   const activeMood = activeMoodId ? getMood(activeMoodId) : null;
   const selectedFilter = MIRROR_FILTERS.find((filter) => filter.id === filterId) ?? MIRROR_FILTERS[0];
+  const selectedEmote = FACE_EMOTES.find((emote) => emote.id === faceEmoteId) ?? FACE_EMOTES[0];
   const isManualMood = manualMood !== null;
   const isScanning = mirror.cameraState === "live" || mirror.cameraState === "no-face";
 
@@ -106,6 +110,14 @@ export default function Home() {
             <div className={`mirror-screen ${mirror.cameraActive ? "has-camera" : ""}`}>
               <video ref={mirror.videoRef} autoPlay muted playsInline aria-label="Live mirrored camera preview" style={{ filter: selectedFilter.css }} />
               <div className="mirror-grain" aria-hidden="true" />
+              {mirror.cameraActive && faceEmoteId !== "none" && (
+                <FaceEmoteOverlay
+                  emoteId={faceEmoteId}
+                  anchors={mirror.faceAnchors}
+                  videoWidth={mirror.videoRef.current?.videoWidth ?? 0}
+                  videoHeight={mirror.videoRef.current?.videoHeight ?? 0}
+                />
+              )}
               {mirror.cameraActive ? (
                 <>
                   <div className="face-corner corner-tl" aria-hidden="true" /><div className="face-corner corner-tr" aria-hidden="true" />
@@ -155,6 +167,29 @@ export default function Home() {
                   ))}
                 </div>
                 <p className="filter-footnote">The mood model still reads the original camera feed.</p>
+                <div className="emote-controls">
+                  <div className="filter-controls-top">
+                    <span>FACE EMOTES</span>
+                    <span>{selectedEmote.label.toUpperCase()} · {faceEmoteId === "none" ? "OFF" : mirror.faceAnchors ? "TRACKING" : "WAITING FOR FACE"}</span>
+                  </div>
+                  <div className="emote-tray" role="group" aria-label="Choose a face emote">
+                    {FACE_EMOTES.map((emote) => (
+                      <button
+                        key={emote.id}
+                        className={`emote-choice ${faceEmoteId === emote.id ? "selected" : ""}`}
+                        type="button"
+                        aria-label={emote.id === "none" ? "Turn off face emotes" : `Apply ${emote.label} face emote`}
+                        aria-pressed={faceEmoteId === emote.id}
+                        onClick={() => setFaceEmoteId(emote.id)}
+                        title={emote.label}
+                      >
+                        <span aria-hidden="true">{emote.emoji}</span>
+                        <small>{emote.label}</small>
+                      </button>
+                    ))}
+                  </div>
+                  <p className="filter-footnote">Stickers follow your face locally and are not recorded.</p>
+                </div>
               </div>
             )}
             <div className="mirror-foot">
