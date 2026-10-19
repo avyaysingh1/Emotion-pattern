@@ -1,0 +1,10 @@
+{
+  "name": "Mira Emotion Mirror",
+  "description": "A privacy-focused, camera-based emotion mirror with on-device MediaPipe expression cues, mood suggestions, interactive emoji check-ins, and optional browser-generated ambient tones.",
+  "visibility": "public",
+  "site": {
+    "installCommand": "pnpm install --frozen-lockfile",
+    "buildCommand": "pnpm build:static",
+    "outputDirectory": "dist/public"
+  }
+}
