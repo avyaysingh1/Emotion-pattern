@@ -89,6 +89,17 @@ h1 em { color: #81973b; font-style: italic; }
 .mirror-foot { min-height: 46px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 6px; }
 .mirror-foot-copy { display: flex; align-items: center; gap: 8px; color: #686c62; font-size: 10px; }
 .foot-signal { width: 6px; height: 6px; background: #9bac66; border-radius: 50%; }
+.filter-controls { margin: 0 2px; padding: 12px 5px 8px; border-top: 1px solid rgba(92, 101, 77, .14); }
+.filter-controls-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: #6e7268; font-size: 8px; font-weight: 700; letter-spacing: .12em; }
+.filter-controls-top span:last-child { color: #929487; font-size: 7px; letter-spacing: .08em; }
+.filter-tray { display: flex; gap: 6px; margin-top: 7px; overflow-x: auto; padding: 0 0 4px; scrollbar-color: #c9cfb3 transparent; scrollbar-width: thin; }
+.filter-choice { flex: 0 0 62px; min-width: 0; min-height: 55px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 4px 3px; border: 1px solid transparent; border-radius: 9px; background: transparent; cursor: pointer; transition: background .18s ease, border-color .18s ease, transform .18s ease; }
+.filter-choice:hover { background: rgba(255, 255, 255, .42); transform: translateY(-1px); }
+.filter-choice.selected { border-color: #cfd7b8; background: #f7f8ef; }
+.filter-swatch { width: 25px; height: 25px; flex: 0 0 25px; border: 1px solid rgba(49, 57, 44, .14); border-radius: 50%; background: var(--filter-swatch); }
+.filter-choice small { color: #777b70; font-size: 8px; line-height: 1; white-space: nowrap; }
+.filter-choice.selected small { color: #414638; font-weight: 700; }
+.filter-footnote { margin: 5px 0 0; color: #929487; font-size: 8px; line-height: 1.4; }
 .camera-stop { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; color: #777b71; padding: 7px 3px; cursor: pointer; letter-spacing: .04em; text-transform: none; font-size: 10px; }
 .camera-stop:hover { color: #33392c; }
 .mirror-caption { margin: 11px 4px 0; color: #898b81; font-weight: 500; font-size: 9px; letter-spacing: .02em; line-height: 1.7; }.mirror-caption span { margin-right: 7px; color: #717568; letter-spacing: .13em; font-weight: 700; }
