@@ -6,6 +6,7 @@ import { useEmotionMirror } from "@/features/mirror/useEmotionMirror";
 import { MIRROR_FILTERS, type MirrorFilterId } from "@/features/mirror/filters";
 import { FACE_EMOTES, type FaceEmoteId } from "@/features/mirror/emotes";
 import { FaceEmoteOverlay } from "@/features/mirror/FaceEmoteOverlay";
+import { FaceWireframeOverlay } from "@/features/mirror/FaceWireframeOverlay";
 
 function statusText(state: string) {
   if (state === "requesting") return "Waiting for permission";
@@ -18,7 +19,8 @@ function statusText(state: string) {
 
 export default function Home() {
   const [faceEmoteId, setFaceEmoteId] = useState<FaceEmoteId>("none");
-  const mirror = useEmotionMirror(faceEmoteId !== "none");
+  const [wireframeEnabled, setWireframeEnabled] = useState(true);
+  const mirror = useEmotionMirror(wireframeEnabled || faceEmoteId !== "none");
   const [manualMood, setManualMood] = useState<MoodId | null>(null);
   const [filterId, setFilterId] = useState<MirrorFilterId>("natural");
   const [suggestionIndex, setSuggestionIndex] = useState(0);
@@ -110,6 +112,13 @@ export default function Home() {
             <div className={`mirror-screen ${mirror.cameraActive ? "has-camera" : ""}`}>
               <video ref={mirror.videoRef} autoPlay muted playsInline aria-label="Live mirrored camera preview" style={{ filter: selectedFilter.css }} />
               <div className="mirror-grain" aria-hidden="true" />
+              {mirror.cameraActive && wireframeEnabled && (
+                <FaceWireframeOverlay
+                  landmarks={mirror.faceMesh}
+                  videoWidth={mirror.videoRef.current?.videoWidth ?? 0}
+                  videoHeight={mirror.videoRef.current?.videoHeight ?? 0}
+                />
+              )}
               {mirror.cameraActive && faceEmoteId !== "none" && (
                 <FaceEmoteOverlay
                   emoteId={faceEmoteId}
@@ -167,6 +176,22 @@ export default function Home() {
                   ))}
                 </div>
                 <p className="filter-footnote">The mood model still reads the original camera feed.</p>
+                <div className="tracking-controls">
+                  <div className="tracking-label">
+                    <strong>FACE TRACKING</strong>
+                    <small>{wireframeEnabled ? (mirror.faceMesh ? "LANDMARK MESH · LIVE" : "LOOKING FOR FACE") : faceEmoteId !== "none" ? "EMOTE TRACKING · LIVE" : "MESH OFF"}</small>
+                  </div>
+                  <button
+                    className={`wireframe-toggle ${wireframeEnabled ? "is-on" : ""}`}
+                    type="button"
+                    aria-label={wireframeEnabled ? "Turn wireframe face tracking off" : "Turn wireframe face tracking on"}
+                    aria-pressed={wireframeEnabled}
+                    onClick={() => setWireframeEnabled((enabled) => !enabled)}
+                  >
+                    <span className="wireframe-check" aria-hidden="true">{wireframeEnabled && <Check size={12} strokeWidth={3} />}</span>
+                    <span>Wireframe</span>
+                  </button>
+                </div>
                 <div className="emote-controls">
                   <div className="filter-controls-top">
                     <span>FACE EMOTES</span>

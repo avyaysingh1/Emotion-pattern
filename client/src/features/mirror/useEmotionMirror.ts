@@ -1,7 +1,7 @@
 import type { FaceLandmarker } from "@mediapipe/tasks-vision";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { classifyExpression, type ExpressionRead } from "./emotion";
-import type { FaceAnchors } from "./emotes";
+import type { FaceAnchors, NormalizedFacePoint } from "./emotes";
 
 export type CameraState = "off" | "requesting" | "loading" | "live" | "no-face" | "error";
 
@@ -54,6 +54,7 @@ export function useEmotionMirror(trackFace = false) {
   const [errorMessage, setErrorMessage] = useState("");
   const [expression, setExpression] = useState<ExpressionRead | null>(null);
   const [faceAnchors, setFaceAnchors] = useState<FaceAnchors | null>(null);
+  const [faceMesh, setFaceMesh] = useState<NormalizedFacePoint[] | null>(null);
 
   const releaseResources = useCallback(() => {
     runningRef.current = false;
@@ -73,6 +74,7 @@ export function useEmotionMirror(trackFace = false) {
     setErrorMessage("");
     setExpression(null);
     setFaceAnchors(null);
+    setFaceMesh(null);
     setCameraState("requesting");
 
     try {
@@ -152,12 +154,16 @@ export function useEmotionMirror(trackFace = false) {
     releaseResources();
     setExpression(null);
     setFaceAnchors(null);
+    setFaceMesh(null);
     setErrorMessage("");
     setCameraState("off");
   }, [releaseResources]);
 
   useEffect(() => {
-    if (!trackFace) setFaceAnchors(null);
+    if (!trackFace) {
+      setFaceAnchors(null);
+      setFaceMesh(null);
+    }
   }, [trackFace]);
 
   useEffect(() => {
@@ -182,10 +188,16 @@ export function useEmotionMirror(trackFace = false) {
             candidateMoodRef.current = null;
             candidateFramesRef.current = 0;
             setExpression(null);
-            if (trackFaceRef.current) setFaceAnchors(null);
+            if (trackFaceRef.current) {
+              setFaceAnchors(null);
+              setFaceMesh(null);
+            }
             setCameraState((current) => current === "no-face" ? current : "no-face");
           } else {
-            if (trackFaceRef.current) setFaceAnchors(anchors);
+            if (trackFaceRef.current) {
+              setFaceAnchors(anchors);
+              setFaceMesh(landmarks!.slice(0, 468).map(({ x, y }) => ({ x, y })));
+            }
             const next = classifyExpression(categories);
             if (candidateMoodRef.current === next.mood) {
               candidateFramesRef.current += 1;
@@ -225,6 +237,7 @@ export function useEmotionMirror(trackFace = false) {
     errorMessage,
     expression,
     faceAnchors,
+    faceMesh,
     cameraActive: cameraState === "loading" || cameraState === "live" || cameraState === "no-face",
     startCamera,
     stopCamera,
