@@ -1,4 +1,4 @@
-import { Camera, CameraOff, Check, ChevronRight, CircleHelp, Headphones, Heart, LoaderCircle, Music2, Pause, Play, RefreshCw, ShieldCheck, Sparkles, Volume2 } from "lucide-react";
+import { Camera, CameraOff, Check, ChevronRight, CircleHelp, Headphones, Heart, LoaderCircle, Moon, Music2, Pause, Play, RefreshCw, ShieldCheck, Sparkles, Sun, Volume2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { getMood, MOODS, type MoodId } from "@/features/mirror/emotion";
 import { createAmbientPlayer, type AmbientPlayer } from "@/features/mirror/music";
@@ -18,6 +18,13 @@ function statusText(state: string) {
 }
 
 export default function Home() {
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    try {
+      return window.localStorage.getItem("mira-theme") === "dark";
+    } catch {
+      return false;
+    }
+  });
   const [faceEmoteId, setFaceEmoteId] = useState<FaceEmoteId>("none");
   const [wireframeEnabled, setWireframeEnabled] = useState(true);
   const mirror = useEmotionMirror(wireframeEnabled || faceEmoteId !== "none");
@@ -35,6 +42,16 @@ export default function Home() {
   const selectedEmote = FACE_EMOTES.find((emote) => emote.id === faceEmoteId) ?? FACE_EMOTES[0];
   const isManualMood = manualMood !== null;
   const isScanning = mirror.cameraState === "live" || mirror.cameraState === "no-face";
+
+  useEffect(() => {
+    const theme = isDarkMode ? "dark" : "light";
+    document.documentElement.dataset.theme = theme;
+    try {
+      window.localStorage.setItem("mira-theme", theme);
+    } catch {
+      // The appearance switch still works for this visit if storage is unavailable.
+    }
+  }, [isDarkMode]);
 
   useEffect(() => {
     setSuggestionIndex(0);
@@ -83,6 +100,16 @@ export default function Home() {
           <span className="brand-caption">EMOTION MIRROR</span>
         </a>
         <div className="topbar-right">
+          <button
+            className="theme-toggle"
+            type="button"
+            aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+            aria-pressed={isDarkMode}
+            title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+            onClick={() => setIsDarkMode((enabled) => !enabled)}
+          >
+            {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
           <span className="privacy-chip"><ShieldCheck size={14} /> ON-DEVICE & PRIVATE</span>
           <button className="text-action" type="button" onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })}>
             HOW IT WORKS <ChevronRight size={15} />
