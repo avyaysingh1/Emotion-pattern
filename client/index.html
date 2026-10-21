@@ -4,6 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f5f4ed" />
+    <script>
+      try {
+        const theme = window.localStorage.getItem("mira-theme");
+        if (theme === "dark" || theme === "light") {
+          document.documentElement.dataset.theme = theme;
+          document.querySelector('meta[name="theme-color"]').setAttribute("content", theme === "dark" ? "#141814" : "#f5f4ed");
+        }
+      } catch { /* Keep the default light appearance when storage is unavailable. */ }
+    </script>
     <meta name="description" content="A private, camera-based emotion mirror for noticing expression cues, choosing your mood, and finding a gentle next step." />
     <title>Mira — Emotion Mirror</title>
   </head>

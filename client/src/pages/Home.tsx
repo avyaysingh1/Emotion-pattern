@@ -45,7 +45,9 @@ export default function Home() {
 
   useEffect(() => {
     const theme = isDarkMode ? "dark" : "light";
+    const themeColor = isDarkMode ? "#141814" : "#f5f4ed";
     document.documentElement.dataset.theme = theme;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", themeColor);
     try {
       window.localStorage.setItem("mira-theme", theme);
     } catch {

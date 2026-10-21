@@ -3,6 +3,7 @@
 
 :root {
   font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+  color-scheme: light;
   color: #272b25;
   background: #f5f4ed;
   font-synthesis: none;
@@ -220,13 +221,13 @@ h1 em { color: #81973b; font-style: italic; }
 :root[data-theme="dark"] {
   color-scheme: dark;
   color: #e8eadf;
-  background: #171a16;
+  background: #141814;
   --ink: #e8eadf;
-  --muted: #a5ab9c;
-  --paper: #171a16;
-  --line: #343a31;
+  --muted: #b4bbab;
+  --paper: #141814;
+  --line: #3a4438;
 }
-:root[data-theme="dark"] body { color: #e8eadf; background: #171a16; }
+:root[data-theme="dark"] body { color: #e8eadf; background: radial-gradient(ellipse at 50% -18%, #20281e 0%, #171c16 43%, #141814 100%); transition: background .3s ease, color .3s ease; }
 :root[data-theme="dark"] .topbar { border-color: #343a31; }
 :root[data-theme="dark"] .brand { color: #e8eadf; }
 :root[data-theme="dark"] .brand-mark { border-color: #e8eadf; }
@@ -253,7 +254,7 @@ h1 em { color: #81973b; font-style: italic; }
 :root[data-theme="dark"] .section-rule { background: #51574b; }
 :root[data-theme="dark"] .live-badge { color: #a4aa9b; }
 :root[data-theme="dark"] .live-badge.is-live > span { box-shadow: 0 0 0 4px #343e2c; }
-:root[data-theme="dark"] .mirror-frame { background: #252a23; border-color: #373d33; }
+:root[data-theme="dark"] .mirror-frame { background: linear-gradient(145deg, #2a3127, #20261f); border-color: #414a3d; box-shadow: 0 12px 36px rgba(0, 0, 0, .2); }
 :root[data-theme="dark"] .mirror-frame.mood-joyful { background: #2b3325; }
 :root[data-theme="dark"] .mirror-frame.mood-calm { background: #26332c; }
 :root[data-theme="dark"] .mirror-frame.mood-focused { background: #263339; }
@@ -289,7 +290,7 @@ h1 em { color: #81973b; font-style: italic; }
 :root[data-theme="dark"] .wireframe-toggle.is-on { border-color: #667b45; color: #dceab9; background: #303a29; }
 :root[data-theme="dark"] .wireframe-check { border-color: #606658; background: #1e221c; color: #a6d17c; }
 :root[data-theme="dark"] .wireframe-toggle.is-on .wireframe-check { border-color: #82a15a; background: #252d20; }
-:root[data-theme="dark"] .mood-card { border-color: #41483b; background: linear-gradient(135deg, color-mix(in srgb, var(--mood-color) 18%, #242920), #20241e 72%); }
+:root[data-theme="dark"] .mood-card { border-color: #414a3d; background: linear-gradient(135deg, color-mix(in srgb, var(--mood-color) 20%, #293126), #20261f 74%); box-shadow: inset 0 1px rgba(255, 255, 255, .035); }
 :root[data-theme="dark"] .mood-card-top { color: #c0c5b6; }
 :root[data-theme="dark"] .mood-index { color: #959d8d; }
 :root[data-theme="dark"] .mood-text h2 { color: #eeefe5; }
@@ -301,7 +302,7 @@ h1 em { color: #81973b; font-style: italic; }
 :root[data-theme="dark"] .confidence-track { background: rgba(230, 238, 219, .14); }
 :root[data-theme="dark"] .confidence-row strong { color: #d5dacb; }
 :root[data-theme="dark"] .return-to-live { color: #c4d99b; }
-:root[data-theme="dark"] .suggestion-card { border-color: #3b4237; background: #20241e; }
+:root[data-theme="dark"] .suggestion-card { border-color: #3c453a; background: linear-gradient(145deg, #232922, #1e241e); box-shadow: 0 8px 24px rgba(0, 0, 0, .12); }
 :root[data-theme="dark"] .suggestion-heading .section-kicker { color: #bdc995; }
 :root[data-theme="dark"] .suggestion-count,
 :root[data-theme="dark"] .emoji-hint { color: #9ba291; }
@@ -314,7 +315,7 @@ h1 em { color: #81973b; font-style: italic; }
 :root[data-theme="dark"] .emoji-choice small { color: #b0b6a8; }
 :root[data-theme="dark"] .emoji-choice.selected { border-color: color-mix(in srgb, var(--emoji-color) 55%, #59634b); background: color-mix(in srgb, var(--emoji-color) 12%, #252a22); }
 :root[data-theme="dark"] .emoji-choice.selected small { color: #e8ebdf; }
-:root[data-theme="dark"] .music-card { border-color: #3c4338; background: #252b23; }
+:root[data-theme="dark"] .music-card { border-color: #424c3d; background: linear-gradient(145deg, #2a3127, #232a22); box-shadow: inset 0 1px rgba(255, 255, 255, .035); }
 :root[data-theme="dark"] .music-icon { background: #35402c; color: #c1d59c; }
 :root[data-theme="dark"] .music-title-row h3 { color: #e8eadf; }
 :root[data-theme="dark"] .optional-tag { border-color: #4c5543; color: #b9c59e; }
@@ -329,6 +330,16 @@ h1 em { color: #81973b; font-style: italic; }
 :root[data-theme="dark"] .music-error { color: #ffb5a0; }
 :root[data-theme="dark"] .how-it-works { border-color: #3c4238; }
 :root[data-theme="dark"] .how-stamp { color: #c0d19b; }
+:root[data-theme="dark"] .theme-toggle { box-shadow: 0 0 0 4px rgba(217, 241, 121, .045); }
+:root[data-theme="dark"] .theme-toggle:focus-visible { outline-color: #d9f179; }
+:root[data-theme="dark"] .mood-card,
+:root[data-theme="dark"] .suggestion-card,
+:root[data-theme="dark"] .music-card,
+:root[data-theme="dark"] .mirror-frame,
+:root[data-theme="dark"] .theme-toggle { transition-duration: .28s; }
+:root[data-theme="dark"] .suggestion-card h3,
+:root[data-theme="dark"] .music-title-row h3,
+:root[data-theme="dark"] .mood-text h2 { text-shadow: 0 1px 16px rgba(0, 0, 0, .16); }
 :root[data-theme="dark"] .footer { color: #adb3a4; }
 :root[data-theme="dark"] .footer > span:first-child { color: #e1e4d8; }
 :root[data-theme="dark"] .footer small,
